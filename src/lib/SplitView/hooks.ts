@@ -1,26 +1,31 @@
-import { useRef, useState, MouseEvent, useCallback } from 'react';
+import { useRef, useState, PointerEvent, useCallback } from 'react';
 
-import { isGrow, getMaxAvailableWidth } from './utils';
+import { isGrow, getMaxAvailableWidth, getMaxAvailableHeight } from './utils';
 
-export function useSplitViewState() {
+export function useSplitViewState(orientation: 'horizontal' | 'vertical') {
   const panelsRef = useRef<HTMLElement[]>([]);
 
   const [dragging, setDragging] = useState(false);
   const [dragIndex, setDragIndex] = useState(-1);
   const [dragStart, setDragStart] = useState(0);
 
-  const onMouseDown = useCallback(
-    (event: MouseEvent<HTMLDivElement>, index: number) => {
+  const onPointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>, index: number) => {
       event.preventDefault();
 
       setDragging(true);
       setDragIndex(index);
-      setDragStart(event.clientX);
+
+      if (orientation === 'vertical') {
+        setDragStart(event.clientX);
+      } else {
+        setDragStart(event.clientY);
+      }
     },
-    []
+    [orientation]
   );
 
-  const onMouseUp = useCallback((event: MouseEvent<HTMLDivElement>) => {
+  const onPointerUp = useCallback((event: PointerEvent<HTMLDivElement>) => {
     event.preventDefault();
 
     setDragging(false);
@@ -28,44 +33,74 @@ export function useSplitViewState() {
     setDragStart(0);
   }, []);
 
-  const onMouseMove = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
+  const onPointerMove = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
       event.preventDefault();
 
       if (!dragging) return;
 
-      const elemIndex = isGrow(panelsRef.current[dragIndex - 1])
-        ? dragIndex
-        : dragIndex - 1;
+      const elemIndex = isGrow(panelsRef.current[dragIndex])
+        ? dragIndex + 1
+        : dragIndex;
 
-      const isGrowing = isGrow(panelsRef.current[dragIndex - 1]);
+      const isGrowing = isGrow(panelsRef.current[dragIndex]);
 
       const element = panelsRef.current[elemIndex];
 
-      const maxWidth = getMaxAvailableWidth(panelsRef.current, elemIndex);
+      if (orientation === 'vertical') {
+        const maxWidth = getMaxAvailableWidth(panelsRef.current, elemIndex);
 
-      const delta = isGrowing
-        ? dragStart - event.clientX
-        : event.clientX - dragStart;
+        const delta = isGrowing
+          ? dragStart - event.clientX
+          : event.clientX - dragStart;
 
-      const width = element.clientWidth + delta;
+        const width = element.clientWidth + delta;
 
-      if (width >= maxWidth) {
-        element.style.width = `${maxWidth}px`;
-        return;
+        if (width >= maxWidth) {
+          element.style.width = `${maxWidth}px`;
+          return;
+        }
+
+        if (
+          element.style.minWidth &&
+          width < parseInt(element.style.minWidth)
+        ) {
+          element.style.width = element.style.minWidth;
+          return;
+        }
+
+        element.style.width = `${width}px`;
+
+        setDragStart(event.clientX);
+      } else {
+        const maxHeight = getMaxAvailableHeight(panelsRef.current, elemIndex);
+
+        const delta = isGrowing
+          ? dragStart - event.clientY
+          : event.clientY - dragStart;
+
+        const height = element.clientHeight + delta;
+
+        if (height >= maxHeight) {
+          element.style.height = `${maxHeight}px`;
+          return;
+        }
+
+        if (
+          element.style.minHeight &&
+          height < parseInt(element.style.minHeight)
+        ) {
+          element.style.height = element.style.minHeight;
+          return;
+        }
+
+        element.style.height = `${height}px`;
+
+        setDragStart(event.clientY);
       }
-
-      if (element.style.minWidth && width < parseInt(element.style.minWidth)) {
-        element.style.width = element.style.minWidth;
-        return;
-      }
-
-      element.style.width = `${width}px`;
-
-      setDragStart(event.clientX);
     },
-    [dragIndex, dragStart, dragging]
+    [dragIndex, dragStart, dragging, orientation]
   );
 
-  return { panelsRef, onMouseDown, onMouseUp, onMouseMove };
+  return { panelsRef, onPointerDown, onPointerUp, onPointerMove };
 }

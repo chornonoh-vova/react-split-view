@@ -7,35 +7,79 @@ type SplitPanelProps = {
   children: ReactNode;
 
   /**
+   * @private
+   */
+  orientation?: 'horizontal' | 'vertical';
+
+  /**
    * Let panel to take all available space
    */
   grow?: boolean;
 
   /**
+   * Initial size of the split panel (in pixels)
+   */
+  initialSize?: number | string;
+
+  /**
    * Minimum size of the split panel (in pixels)
    */
-  minWidth?: number | string;
+  minSize?: number | string;
 
   /**
    * Maximum size of the split panel (in pixels)
    */
-  maxWidth?: number | string;
+  maxSize?: number | string;
 } & HTMLAttributes<HTMLDivElement>;
 
 /**
  * SplitPanel is an element that can be resized by the user.
  */
 export default forwardRef(function SplitPanel(
-  { children, grow, minWidth, maxWidth, ...rest }: SplitPanelProps,
+  {
+    children,
+    grow,
+    orientation,
+    initialSize,
+    minSize,
+    maxSize,
+    ...rest
+  }: SplitPanelProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  return (
-    <div
-      ref={ref}
-      style={{ minWidth, maxWidth, flexGrow: grow ? 1 : 0 }}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
+  if (orientation === 'vertical') {
+    const width = !grow ? initialSize || minSize : undefined;
+
+    return (
+      <div
+        ref={ref}
+        style={{
+          width,
+          minWidth: minSize,
+          maxWidth: maxSize,
+          flexGrow: grow ? 1 : 0,
+        }}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  } else {
+    const height = !grow ? initialSize || minSize : undefined;
+
+    return (
+      <div
+        ref={ref}
+        style={{
+          height,
+          minHeight: minSize,
+          maxHeight: maxSize,
+          flexGrow: grow ? 1 : 0,
+        }}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  }
 });

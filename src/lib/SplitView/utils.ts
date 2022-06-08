@@ -16,3 +16,21 @@ export function getMaxAvailableWidth(elements: HTMLElement[], current: number) {
 
   return all - others;
 }
+
+export function getMaxAvailableHeight(
+  elements: HTMLElement[],
+  current: number
+) {
+  const all = elements.reduce((acc, curr) => acc + curr.clientHeight, 0);
+
+  const others = elements.reduce((acc, curr, index) => {
+    if (index === current) return acc;
+
+    const minHeight = parseInt(curr.style.minHeight || '0');
+    const height = parseInt(curr.style.height || '0');
+
+    return acc + (height || minHeight);
+  }, 0);
+
+  return all - others;
+}

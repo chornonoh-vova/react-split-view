@@ -1,22 +1,31 @@
-import { MouseEvent } from 'react';
+import { PointerEvent } from 'react';
 
 import StyledSplitDivider from './StyledSplitDivider';
 
 type SplitDividerProps = {
   index: number;
+  orientation: 'horizontal' | 'vertical';
   color?: string;
-  onMouseDown: (event: MouseEvent<HTMLDivElement>, index: number) => void;
+  hoverColor?: string;
+  hoverBorderColor?: string;
+  onPointerDown: (event: PointerEvent<HTMLDivElement>, index: number) => void;
 };
 
 export default function SplitDivider({
   index,
-  color = '#000',
-  onMouseDown,
+  orientation,
+  color,
+  hoverColor,
+  hoverBorderColor,
+  onPointerDown,
 }: SplitDividerProps) {
   return (
     <StyledSplitDivider
+      orientation={orientation}
       color={color}
-      onMouseDown={(event) => onMouseDown(event, index)}
+      hoverColor={hoverColor}
+      hoverBorderColor={hoverBorderColor}
+      onPointerDown={(event) => onPointerDown(event, index)}
     />
   );
 }

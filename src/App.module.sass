@@ -1,12 +1,20 @@
-.vertical-panels
+.vertical-panels, .horizontal-panels
   display: flex
-  flex-direction: column
   padding: 20px
   gap: 20px
-  
+  flex-direction: column
+
   .header
     display: flex
+    justify-content: space-between
+
   
+.vertical-panels
   .example
-    height: 400px
+    height: 200px
+    width: 100%
+
+.horizontal-panels
+  .example
+    height: 600px
     width: 100%

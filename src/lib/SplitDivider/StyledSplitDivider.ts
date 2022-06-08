@@ -1,33 +1,57 @@
 import styled from 'styled-components';
-import Color from 'color';
+
+const DEFAULT_COLOR = 'rgb(128, 128, 128)';
+const DEFAULT_HOVER_COLOR = 'rgb(72, 66, 245)';
+const DEFAULT_HOVER_BORDER_COLOR = 'rgba(72, 66, 245, 0.2)';
 
 export default styled.div<{
+  orientation: 'horizontal' | 'vertical';
   color?: string;
+  hoverColor?: string;
+  hoverBorderColor?: string;
   width?: number;
   borderWidth?: number;
-}>(({ color = '#000', width = 2, borderWidth = 4 }) => {
-  const inputColor = new Color(color);
-
-  const backgroundColor = inputColor.rgb().string();
-  const hoverColor = inputColor.alpha(0.5).rgb().string();
-
-  return {
-    background: backgroundColor,
-    opacity: 0.5,
+}>(
+  ({
+    orientation,
+    color = DEFAULT_COLOR,
+    hoverColor = DEFAULT_HOVER_COLOR,
+    hoverBorderColor = DEFAULT_HOVER_BORDER_COLOR,
+    width = 1,
+    borderWidth = 3,
+  }) => ({
+    backgroundColor: color,
     zIndex: 1,
 
     boxSizing: 'border-box',
     backgroundClip: 'padding-box',
 
-    width: borderWidth * 2 + width,
-    margin: `0 -${borderWidth}px`,
-    borderLeft: `${borderWidth}px solid transparent`,
-    borderRight: `${borderWidth}px solid transparent`,
+    ...(orientation === 'vertical' && {
+      height: '100%',
+      width: borderWidth * 2 + width,
+      margin: `0 -${borderWidth}px`,
+      borderInline: `${borderWidth}px solid transparent`,
+    }),
+
+    ...(orientation === 'horizontal' && {
+      width: '100%',
+      height: borderWidth * 2 + width,
+      margin: `-${borderWidth}px 0`,
+      borderBlock: `${borderWidth}px solid transparent`,
+    }),
 
     '&:active, &:hover': {
-      borderLeft: `${borderWidth}px solid ${hoverColor}`,
-      borderRight: `${borderWidth}px solid ${hoverColor}`,
-      cursor: 'col-resize',
+      backgroundColor: hoverColor,
+
+      ...(orientation === 'vertical' && {
+        borderInline: `${borderWidth}px solid ${hoverBorderColor}`,
+        cursor: 'col-resize',
+      }),
+
+      ...(orientation === 'horizontal' && {
+        borderBlock: `${borderWidth}px solid ${hoverBorderColor}`,
+        cursor: 'row-resize',
+      }),
     },
-  };
-});
+  })
+);
