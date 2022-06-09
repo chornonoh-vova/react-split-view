@@ -1,13 +1,14 @@
 import { PointerEvent } from 'react';
+import { Orientation } from '../common/types';
 
 import StyledSplitDivider from './StyledSplitDivider';
 
 type SplitDividerProps = {
   index: number;
-  orientation: 'horizontal' | 'vertical';
-  color?: string;
-  hoverColor?: string;
-  hoverBorderColor?: string;
+  orientation: Orientation;
+  color: string;
+  hoverColor: string;
+  hoverBorderColor: string;
   onPointerDown: (event: PointerEvent<HTMLDivElement>, index: number) => void;
 };
 

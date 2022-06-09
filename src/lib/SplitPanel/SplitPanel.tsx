@@ -1,4 +1,11 @@
-import { forwardRef, ForwardedRef, HTMLAttributes, ReactNode } from 'react';
+import {
+  forwardRef,
+  ForwardedRef,
+  HTMLAttributes,
+  ReactNode,
+  CSSProperties,
+} from 'react';
+import { Orientation } from '../common/types';
 
 type SplitPanelProps = {
   /**
@@ -9,7 +16,7 @@ type SplitPanelProps = {
   /**
    * @private
    */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: Orientation;
 
   /**
    * Let panel to take all available space
@@ -47,39 +54,25 @@ export default forwardRef(function SplitPanel(
   }: SplitPanelProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
+  const flexGrow = grow ? 1 : 0;
+
+  let style: CSSProperties = { flexGrow };
+
   if (orientation === 'vertical') {
     const width = !grow ? initialSize || minSize : undefined;
+    const maxWidth = !grow ? maxSize : undefined;
 
-    return (
-      <div
-        ref={ref}
-        style={{
-          width,
-          minWidth: minSize,
-          maxWidth: maxSize,
-          flexGrow: grow ? 1 : 0,
-        }}
-        {...rest}
-      >
-        {children}
-      </div>
-    );
+    style = Object.assign(style, { width, maxWidth, minWidth: minSize });
   } else {
     const height = !grow ? initialSize || minSize : undefined;
+    const maxHeight = !grow ? maxSize : undefined;
 
-    return (
-      <div
-        ref={ref}
-        style={{
-          height,
-          minHeight: minSize,
-          maxHeight: maxSize,
-          flexGrow: grow ? 1 : 0,
-        }}
-        {...rest}
-      >
-        {children}
-      </div>
-    );
+    style = Object.assign(style, { height, maxHeight, minHeight: minSize });
   }
+
+  return (
+    <div ref={ref} style={style} {...rest}>
+      {children}
+    </div>
+  );
 });

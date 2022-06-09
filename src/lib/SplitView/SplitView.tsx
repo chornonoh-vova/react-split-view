@@ -1,4 +1,10 @@
 import { Children, ReactNode, cloneElement, Fragment } from 'react';
+import {
+  DEFAULT_DIVIDER_COLOR,
+  DEFAULT_DIVIDER_HOVER_BORDER_COLOR,
+  DEFAULT_DIVIDER_HOVER_COLOR,
+} from '../common/config';
+import { Orientation } from '../common/types';
 
 import { SplitDivider } from '../SplitDivider';
 import { useSplitViewState } from './hooks';
@@ -16,7 +22,7 @@ type SplitViewProps = {
    * Can be either `horizontal` or `vertical`.
    * Defaults to `vertical`.
    */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: Orientation;
 
   /**
    * Options for customizing dividers
@@ -50,6 +56,12 @@ export default function SplitView({
   const { panelsRef, onPointerDown, onPointerUp, onPointerMove } =
     useSplitViewState(orientation);
 
+  const {
+    color = DEFAULT_DIVIDER_COLOR,
+    hoverColor = DEFAULT_DIVIDER_HOVER_COLOR,
+    hoverBorderColor = DEFAULT_DIVIDER_HOVER_BORDER_COLOR,
+  } = divider || {};
+
   const filteredChild = Children.toArray(children).filter(Boolean);
 
   return (
@@ -71,9 +83,9 @@ export default function SplitView({
               key={`split-divider-${index}`}
               index={index}
               orientation={orientation}
-              color={divider?.color}
-              hoverColor={divider?.hoverColor}
-              hoverBorderColor={divider?.hoverBorderColor}
+              color={color}
+              hoverColor={hoverColor}
+              hoverBorderColor={hoverBorderColor}
               onPointerDown={onPointerDown}
             />
           )}

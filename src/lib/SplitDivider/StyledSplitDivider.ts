@@ -1,22 +1,19 @@
 import styled from 'styled-components';
-
-const DEFAULT_COLOR = 'rgb(128, 128, 128)';
-const DEFAULT_HOVER_COLOR = 'rgb(72, 66, 245)';
-const DEFAULT_HOVER_BORDER_COLOR = 'rgba(72, 66, 245, 0.2)';
+import { Orientation } from '../common/types';
 
 export default styled.div<{
-  orientation: 'horizontal' | 'vertical';
-  color?: string;
-  hoverColor?: string;
-  hoverBorderColor?: string;
+  orientation: Orientation;
+  color: string;
+  hoverColor: string;
+  hoverBorderColor: string;
   width?: number;
   borderWidth?: number;
 }>(
   ({
     orientation,
-    color = DEFAULT_COLOR,
-    hoverColor = DEFAULT_HOVER_COLOR,
-    hoverBorderColor = DEFAULT_HOVER_BORDER_COLOR,
+    color,
+    hoverColor,
+    hoverBorderColor,
     width = 1,
     borderWidth = 3,
   }) => ({
